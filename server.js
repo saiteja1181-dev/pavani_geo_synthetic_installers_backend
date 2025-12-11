@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { initializeDatabase, db } = require('./database');
+const { initializeDatabase, db } = require('./database/database');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -105,4 +105,5 @@ initializeDatabase().then(() => {
   });
 }).catch(error => {
   console.error('Failed to start server:', error);
+
 });
