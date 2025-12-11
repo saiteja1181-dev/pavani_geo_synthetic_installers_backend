@@ -107,3 +107,8 @@ initializeDatabase().then(() => {
   console.error('Failed to start server:', error);
 
 });
+
+// Add this to your main server file (e.g., app.js, server.js, index.js)
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
