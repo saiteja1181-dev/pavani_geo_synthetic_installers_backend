@@ -112,3 +112,12 @@ initializeDatabase().then(() => {
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
+
+const cors = require("cors");
+
+app.use(cors({
+  origin: "*", // allow all (safe for now)
+  methods: ["GET", "POST", "PUT", "DELETE"],
+}));
+
+
