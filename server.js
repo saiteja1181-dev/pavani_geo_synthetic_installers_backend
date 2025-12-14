@@ -95,7 +95,7 @@ app.get('/quote-requests', (req, res) => {
   console.log('📞 SERVER - GET /quote-requests called');
 
   db.all(
-    'SELECT * FROM quote-requests ORDER BY created_at DESC',
+    'SELECT * FROM quote_requests ORDER BY created_at DESC',
     [],
     (err, rows) => {
       if (err) {
@@ -130,6 +130,7 @@ initializeDatabase()
   .catch(err => {
     console.error('Failed to start server:', err);
   });
+
 
 
 
