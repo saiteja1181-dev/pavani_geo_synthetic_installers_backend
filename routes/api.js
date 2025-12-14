@@ -141,7 +141,7 @@ router.get('/gallery', (req, res) => {
   });
 });
 
-router.get('/quote-requests', (req, res) => {
+router.get('/quote_requests', (req, res) => {
   console.log('📞 API - Fetching quote-requests...');
   
   db.all('SELECT * FROM quote_requests', (err, rows) => {
@@ -160,4 +160,5 @@ router.get('/quote-requests', (req, res) => {
 
 
 module.exports = router
+
 
