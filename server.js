@@ -88,16 +88,21 @@ app.post('/quote-requests', (req, res) => {
   });
 });
 
+
+
 // Get all quote requests
 app.get('/quote-requests', (req, res) => {
+  console.log('📞 SERVER - GET /quote-requests called');
+
   db.all(
-    'SELECT * FROM quote_requests ORDER BY created_at DESC',
+    'SELECT * FROM quote-requests ORDER BY created_at DESC',
     [],
     (err, rows) => {
       if (err) {
         console.error('❌ DB error fetching quote_requests:', err);
         return res.status(500).json({ error: err.message });
       }
+      console.log(`✅ Returning ${rows.length} quote_requests`);
       res.json({ quote_requests: rows });
     }
   );
@@ -114,4 +119,5 @@ initializeDatabase()
   .catch(err => {
     console.error('Failed to start server:', err);
   });
+
 
