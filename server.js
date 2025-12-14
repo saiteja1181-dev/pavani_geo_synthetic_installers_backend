@@ -6,8 +6,12 @@ const { initializeDatabase, db } = require('./database/database');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// ===== MIDDLEWARE (FIRST) =====
+app.use(cors({
+  origin: "*", // allow all for now
+  methods: ["GET", "POST", "PUT", "DELETE"],
+}));
+
 app.use(express.json());
 
 // Serve static files
@@ -16,6 +20,10 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 // ===== ROUTES =====
 app.get('/', (req, res) => {
   res.json({ message: 'Server is running!' });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
 });
 
 // Company details
@@ -34,8 +42,7 @@ app.get('/company_details', (req, res) => {
 
 // Services
 app.get('/services', (req, res) => {
-  const sql = `SELECT * FROM services`;
-  db.all(sql, (err, rows) => {
+  db.all(`SELECT * FROM services`, (err, rows) => {
     if (err) return res.status(500).json({ error: 'Database error' });
     res.json(rows);
   });
@@ -43,8 +50,7 @@ app.get('/services', (req, res) => {
 
 // Gallery
 app.get('/gallery', (req, res) => {
-  const sql = `SELECT * FROM gallery`;
-  db.all(sql, (err, rows) => {
+  db.all(`SELECT * FROM gallery`, (err, rows) => {
     if (err) return res.status(500).json({ error: 'Database error' });
     res.json(rows);
   });
@@ -52,72 +58,43 @@ app.get('/gallery', (req, res) => {
 
 // Products
 app.get('/products', (req, res) => {
-  const sql = `SELECT * FROM products`;
-  db.all(sql, (err, rows) => {
+  db.all(`SELECT * FROM products`, (err, rows) => {
     if (err) return res.status(500).json({ error: 'Database error' });
     res.json(rows);
   });
 });
 
-// ===== QUOTE REQUEST ROUTE =====
+// Quote request
 app.post('/quote-requests', (req, res) => {
   const { name, email, phone, service, message } = req.body;
-  
-  // Simple validation
+
   if (!name || !email || !phone || !service) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   const sql = `
-    INSERT INTO quote_requests (name, email, phone, service, message, created_at) 
+    INSERT INTO quote_requests (name, email, phone, service, message, created_at)
     VALUES (?, ?, ?, ?, ?, ?)
   `;
-  
-  const values = [name, email, phone, service, message, new Date().toISOString()];
-  
-  db.run(sql, values, function(err) {
-    if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Failed to save request' });
-    }
-    
-    res.json({ 
-      success: true, 
+
+  db.run(sql, [name, email, phone, service, message, new Date().toISOString()], function (err) {
+    if (err) return res.status(500).json({ error: 'Failed to save request' });
+
+    res.json({
+      success: true,
       message: 'Quote request submitted successfully',
-      id: this.lastID 
+      id: this.lastID
     });
   });
 });
 
-// Get quote requests
-app.get('/quote-requests', (req, res) => {
-  const sql = `SELECT * FROM quote_requests ORDER BY created_at DESC`;
-  db.all(sql, (err, rows) => {
-    if (err) return res.status(500).json({ error: 'Database error' });
-    res.json(rows);
-  });
-});
-
 // ===== START SERVER =====
-initializeDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+initializeDatabase()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('Failed to start server:', err);
   });
-}).catch(error => {
-  console.error('Failed to start server:', error);
-
-});
-
-// Add this to your main server file (e.g., app.js, server.js, index.js)
-app.get('/health', (req, res) => {
-  res.status(200).send('OK');
-});
-
-
-app.use(cors({
-  origin: "*", // allow all (safe for now)
-  methods: ["GET", "POST", "PUT", "DELETE"],
-}));
-
-
-
