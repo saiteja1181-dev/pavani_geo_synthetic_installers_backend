@@ -141,4 +141,21 @@ router.get('/gallery', (req, res) => {
   });
 });
 
-module.exports = router;
+
+
+
+router.get('/quote-requests', (req, res) => {
+  console.log('📞 API - Fetching gallery...');
+  db.all(
+    'SELECT * FROM quote_requests ORDER BY created_at DESC',
+    [],
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(rows);
+    }
+  );
+});
+
+module.exports = router
