@@ -141,15 +141,15 @@ router.get('/gallery', (req, res) => {
   });
 });
 
-router.get('/quote_requests', (req, res) => {
+router.get('/quote-requests', (req, res) => {
   console.log('📞 API - Fetching quote-requests...');
   
-  db.all('SELECT * FROM quote_requests', (err, rows) => {
+  db.all('SELECT * FROM quote-requests', (err, rows) => {
     if (err) {
       console.error('❌ Database error:', err);
       return res.status(500).json({ error: err.message });
     }
-    res.json({ quote_requests: rows });
+    res.json({ quote-requests: rows });
   });
 });
 
@@ -160,5 +160,6 @@ router.get('/quote_requests', (req, res) => {
 
 
 module.exports = router
+
 
 
