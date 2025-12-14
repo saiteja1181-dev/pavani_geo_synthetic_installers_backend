@@ -109,6 +109,17 @@ app.get('/quote-requests', (req, res) => {
 });
 
 
+app.get('/_tables', (req, res) => {
+  db.all("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name", (err, rows) => {
+    if (err) {
+      console.error('❌ DB error listing tables:', err);
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows.map(r => r.name));
+  });
+}); 
+
+
 // ===== START SERVER =====
 initializeDatabase()
   .then(() => {
@@ -119,5 +130,6 @@ initializeDatabase()
   .catch(err => {
     console.error('Failed to start server:', err);
   });
+
 
 
